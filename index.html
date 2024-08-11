@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>House Price Prediction</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f2f5;
+            color: #333;
+        }
+
+        header {
+            background-color: #4CAF50;
+            color: #fff;
+            padding: 15px 0;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        main {
+            max-width: 800px;
+            margin: 30px auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        footer {
+            text-align: center;
+            padding: 15px;
+            background-color: #4CAF50;
+            color: #fff;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+
+        form {
+            margin-top: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        input, button {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        #predictedPrice {
+            margin-top: 20px;
+            font-weight: bold;
+            text-align: center;
+            font-size: 18px;
+            /* color: #4CAF50; */
+            color: black;
+        }
+
+        p {
+            font-size: 16px;
+            line-height: 1.5;
+            margin-bottom: 30px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>House Price Prediction</h1>
+    </header>
+    <main>
+        <p>Welcome to the House Price Prediction Model! Fill out the form below to predict the house price based on various factors.</p>
+
+        <form id="predictionForm">
+            <label for="MedInc">Median Income:</label>
+            <input type="number" step="0.01" id="MedInc" name="MedInc" required>
+
+            <label for="HouseAge">House Age:</label>
+            <input type="number" step="0.01" id="HouseAge" name="HouseAge" required>
+
+            <label for="AveRooms">Average Rooms:</label>
+            <input type="number" step="0.01" id="AveRooms" name="AveRooms" required>
+
+            <label for="AveBedrms">Average Bedrooms:</label>
+            <input type="number" step="0.01" id="AveBedrms" name="AveBedrms" required>
+
+            <label for="Population">Population:</label>
+            <input type="number" step="1" id="Population" name="Population" required>
+
+            <label for="AveOccup">Average Occupancy:</label>
+            <input type="number" step="0.01" id="AveOccup" name="AveOccup" required>
+
+            <label for="Latitude">Latitude:</label>
+            <input type="number" step="0.000001" id="Latitude" name="Latitude" required>
+
+            <label for="Longitude">Longitude:</label>
+            <input type="number" step="0.000001" id="Longitude" name="Longitude" required>
+
+            <button type="button" onclick="sendData()">Predict Price</button>
+            <div id="predictedPrice"></div>
+        </form>
+    </main>
+  
+    <script>
+        function sendData() {
+            const form = document.getElementById('predictionForm');
+            const formData = new FormData(form);
+    
+            fetch('/predict', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.text();
+            })
+            .then(price => {
+                console.log('Received price:', price); // Debugging log
+                const predictedPriceElement = document.getElementById("predictedPrice");
+                if (predictedPriceElement) {
+                    let price2 = parseFloat(price);
+
+                    if(isNaN(price2)){
+                        console.log('Invalid number format');
+                        return null;
+                    }
+                    let result = price2 * 100000;
+                    let result2 = result.toFixed(2);
+                    let resultStr = result2.toString();
+                    predictedPriceElement.innerHTML = "Predicted Price: $" + resultStr;
+                } else {
+                    console.error('Element with ID "predictedPrice" not found.');
+                }
+            })
+        }
+    </script>    
+</body>
+</html>
+
